@@ -8,6 +8,18 @@
 	<organization>
 		<name>JHotDraw</name>
 	</organization>
+	<repositories>
+		<!--
+        Repository hosting NetBeans modules, especially APIs.
+        Versions are based on IDE releases, e.g.: RELEASE691
+        To create your own repository, use: nbm:populate-repository
+        -->
+		<repository>
+			<id>github</id>
+			<name>GitHub external Packages</name>
+			<url>https://maven.pkg.github.com/sweat-tek/MavenRepository</url>
+		</repository>
+	</repositories>
 	<licenses>
 		<license>
 			<name>GNU Library or Lesser General Public License (LGPL) V2.1</name>
@@ -104,14 +116,14 @@
 								<module name="StringLiteralEquality" />
 								<module name="RedundantImport" />
 								<module name="UnusedImports" />
-                                        
+
 								<module name="WhitespaceAfter" />
-										
+
 								<module name="NeedBraces" />
 								<!-- <module name="UnnecessaryParentheses" /> -->
 								<module name="LeftCurly" />
 								<module name="RightCurly" />
-                                        
+
 								<module name="SuppressWarningsHolder" />
 							</module>
 						</module>
@@ -133,9 +145,9 @@
 		<module>jhotdraw-xml</module>
 		<module>jhotdraw-api</module>
 		<module>jhotdraw-utils</module>
-	 <module>jhotdraw-gui</module>
-	 <module>jhotdraw-app</module>
-	 <module>jhotdraw-datatransfer</module>
-	 <module>jhotdraw-actions</module>
+		<module>jhotdraw-gui</module>
+		<module>jhotdraw-app</module>
+		<module>jhotdraw-datatransfer</module>
+		<module>jhotdraw-actions</module>
 	</modules>
 </project>

@@ -7,11 +7,14 @@
       <option name="url" value="https://repo.maven.apache.org/maven2" />
     </remote-repository>
     <remote-repository>
+<<<<<<< Updated upstream
       <option name="id" value="github" />
       <option name="name" value="github" />
       <option name="url" value="https://maven.pkg.github.com/OWNER/REPOSITORY" />
     </remote-repository>
     <remote-repository>
+=======
+>>>>>>> Stashed changes
       <option name="id" value="central" />
       <option name="name" value="Maven Central repository" />
       <option name="url" value="https://repo1.maven.org/maven2" />
@@ -22,11 +25,14 @@
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
     <remote-repository>
+<<<<<<< Updated upstream
       <option name="id" value="github" />
       <option name="name" value="GitHub external Packages" />
       <option name="url" value="https://maven.pkg.github.com/sweat-tek/MavenRepository" />
     </remote-repository>
     <remote-repository>
+=======
+>>>>>>> Stashed changes
       <option name="id" value="central" />
       <option name="name" value="central" />
       <option name="url" value="https://repo1.maven.org/maven2" />

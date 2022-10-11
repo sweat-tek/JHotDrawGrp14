@@ -10,8 +10,13 @@
         <module name="jhotdraw-utils" />
         <module name="jhotdraw-api" />
         <module name="jhotdraw-gui" />
+<<<<<<< Updated upstream
         <module name="jhotdraw-datatransfer" />
         <module name="jhotdraw-core" />
+=======
+        <module name="jhotdraw-core" />
+        <module name="jhotdraw-datatransfer" />
+>>>>>>> Stashed changes
         <module name="jhotdraw-xml" />
         <module name="jhotdraw-samples-misc" />
         <module name="jhotdraw-samples-mini" />

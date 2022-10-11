@@ -13,6 +13,8 @@ import java.awt.geom.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+
+import dk.sdu.mmmi.featuretracer.lib.FeatureEntryPoint;
 import org.jhotdraw.draw.AttributeKeys;
 import static org.jhotdraw.draw.AttributeKeys.*;
 import org.jhotdraw.draw.handle.FontSizeHandle;
@@ -56,6 +58,7 @@ import org.jhotdraw.xml.DOMOutput;
  * Werner Randelshofer (this derived version)
  * @version $Id$
  */
+
 public class TextAreaFigure extends AbstractAttributedDecoratedFigure implements TextHolderFigure {
 
     private static final long serialVersionUID = 1L;
@@ -80,6 +83,7 @@ public class TextAreaFigure extends AbstractAttributedDecoratedFigure implements
     }
 
     // DRAWING
+
     @Override
     protected void drawText(Graphics2D g) {
         if (getText() != null || isEditable()) {
@@ -144,6 +148,7 @@ public class TextAreaFigure extends AbstractAttributedDecoratedFigure implements
      * values
      * @return Returns the actual bounds of the paragraph.
      */
+
     private Rectangle2D.Double drawParagraph(Graphics2D g, AttributedCharacterIterator styledText,
             float verticalPos, float maxVerticalPos, float leftMargin, float rightMargin, float[] tabStops, int tabCount) {
         // This method is based on the code sample given

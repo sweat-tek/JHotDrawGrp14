@@ -7,6 +7,7 @@
  */
 package org.jhotdraw.samples.svg.figures;
 
+import dk.sdu.mmmi.featuretracer.lib.FeatureEntryPoint;
 import org.jhotdraw.draw.figure.TextHolderFigure;
 import java.awt.*;
 import java.awt.font.*;
@@ -73,14 +74,18 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     }
 
     // DRAWING
+
+    @FeatureEntryPoint(value="DrawText")
     @Override
     protected void drawText(java.awt.Graphics2D g) {
     }
+
 
     @Override
     protected void drawFill(Graphics2D g) {
         g.fill(getTextShape());
     }
+
 
     @Override
     protected void drawStroke(Graphics2D g) {
@@ -88,10 +93,12 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     }
 
     // SHAPE AND BOUNDS
+
     @Override
     public Rectangle2D.Double getBounds() {
         return (Rectangle2D.Double) bounds.clone();
     }
+
 
     @Override
     public Rectangle2D.Double getDrawingArea() {
@@ -112,6 +119,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     /**
      * Checks if a Point2D.Double is inside the figure.
      */
+
     @Override
     public boolean contains(Point2D.Double p) {
         if (get(TRANSFORM) != null) {
@@ -124,7 +132,6 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
         Rectangle2D r = getTextShape().getBounds2D();
         return r.isEmpty() ? getBounds().contains(p) : r.contains(p);
     }
-
     private Shape getTextShape() {
         if (cachedTextShape == null) {
             Path2D.Double shape;
@@ -192,6 +199,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
      * values
      * @return Returns the actual bounds of the paragraph.
      */
+    @FeatureEntryPoint(value="TextAreaFigure-AppendParagraph")
     private Rectangle2D.Double appendParagraph(Path2D.Double shape,
             AttributedCharacterIterator styledText,
             float verticalPos, float maxVerticalPos,
@@ -235,6 +243,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
                                 tabLocations[currentTab] + 1,
                                 lineContainsText);
                 // layout can be null if lineContainsText is true
+                // Replace with a conditional operator?
                 if (layout != null) {
                     layouts.add(layout);
                     penPositions.add(horizontalPos);
@@ -245,7 +254,9 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
                 } else {
                     lineComplete = true;
                 }
+
                 lineContainsText = true;
+                // Replace with a switch?
                 if (measurer.getPosition() == tabLocations[currentTab] + 1) {
                     currentTab++;
                 }
@@ -254,6 +265,8 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
                 } else if (tabStops.length == 0 || horizontalPos >= tabStops[tabStops.length - 1]) {
                     lineComplete = true;
                 }
+
+                // Dublicated code?
                 if (!lineComplete) {
                     // move to next tab stop
                     int j;
@@ -269,6 +282,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
             Iterator<TextLayout> layoutEnum = layouts.iterator();
             Iterator<Float> positionEnum = penPositions.iterator();
             // now iterate through layouts and draw them
+            // Make a method draw layouts?
             while (layoutEnum.hasNext()) {
                 TextLayout nextLayout = layoutEnum.next();
                 float nextPosition = positionEnum.next();
@@ -303,6 +317,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
      *
      * @param tx the transformation.
      */
+    @FeatureEntryPoint(value="Transform")
     @Override
     public void transform(AffineTransform tx) {
         if (get(TRANSFORM) != null
@@ -338,6 +353,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
         invalidate();
     }
 
+
     @Override
     public void restoreTransformTo(Object geometry) {
         Object[] restoreData = (Object[]) geometry;
@@ -347,6 +363,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
         STROKE_GRADIENT.setClone(this, (Gradient) restoreData[3]);
         invalidate();
     }
+
 
     @Override
     public Object getTransformRestoreData() {
@@ -386,6 +403,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     /**
      * Sets the text shown by the text figure.
      */
+    @FeatureEntryPoint(value="SetText")
     @Override
     public void setText(String newText) {
         set(TEXT, newText);
@@ -525,7 +543,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     public boolean isEmpty() {
         return getText() == null || getText().length() == 0;
     }
-
+    @FeatureEntryPoint(value="Invalidate")
     @Override
     public void invalidate() {
         super.invalidate();
@@ -553,6 +571,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
      * if you want the width to be unlimited.
      * @return width and height needed to lay out the text.
      */
+
     public Dimension2DDouble getPreferredTextSize(double maxWidth) {
         Rectangle2D.Double textRect = new Rectangle2D.Double();
         if (getText() != null) {
@@ -590,6 +609,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
         return new Dimension2DDouble(Math.abs(textRect.x) + textRect.width, Math.abs(textRect.y) + textRect.height);
     }
 
+    @FeatureEntryPoint(value="Clone text area")
     @Override
     public SVGTextAreaFigure clone() {
         SVGTextAreaFigure that = (SVGTextAreaFigure) super.clone();

@@ -19,7 +19,7 @@ jobs:
           java-version: 11
           distribution: 'adopt'
       - name: Clean install maven
-        run: mvn clean install --batch-mode --update-snapshots package
+        run: mvn clean install --batch-mode --update-snapshots package -DskipTests
 
 
   test:

@@ -14,7 +14,6 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
-import dk.sdu.mmmi.featuretracer.lib.FeatureEntryPoint;
 import org.jhotdraw.draw.AttributeKeys;
 import static org.jhotdraw.draw.AttributeKeys.*;
 import org.jhotdraw.draw.handle.FontSizeHandle;

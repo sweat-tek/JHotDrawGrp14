@@ -36,7 +36,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Test with Maven
-        run: mvn clean install test --batch-mode --update-snapshots package
+        run: mvn clean install test settings.xml --batch-mode --update-snapshots package
         env:
           SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
           SECRET_USER_TOKEN: ${{ secrets.SECRET_USER_TOKEN }}

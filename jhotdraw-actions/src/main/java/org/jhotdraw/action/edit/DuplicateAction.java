@@ -55,6 +55,7 @@ public class DuplicateAction extends AbstractSelectionAction {
     /**
      * Creates a new instance which acts on the currently focused component.
      */
+    @FeatureEntryPoint(value = "Duplicate")
     public DuplicateAction() {
         this(null);
     }
@@ -71,7 +72,6 @@ public class DuplicateAction extends AbstractSelectionAction {
         labels.configureAction(this, ID);
     }
 
-    @FeatureEntryPoint(value = "Duplicate")
     @Override
     public void actionPerformed(ActionEvent evt) {
         JComponent c = target;

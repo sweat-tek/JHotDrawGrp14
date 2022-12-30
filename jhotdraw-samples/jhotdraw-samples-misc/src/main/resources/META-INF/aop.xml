@@ -11,8 +11,4 @@
         <include within="org.jhotdraw..*"/>
     </weaver>
 
-<<<<<<< Updated upstream
 </aspectj>
-=======
-</aspectj>
->>>>>>> Stashed changes

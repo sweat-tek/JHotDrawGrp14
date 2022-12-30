@@ -40,6 +40,7 @@ public class CutAction extends AbstractSelectionAction {
     /**
      * Creates a new instance which acts on the currently focused component.
      */
+    @FeatureEntryPoint(value = "Cut")
     public CutAction() {
         this(null);
     }
@@ -56,7 +57,6 @@ public class CutAction extends AbstractSelectionAction {
         labels.configureAction(this, ID);
     }
 
-    @FeatureEntryPoint(value = "Cut")
     @Override
     public void actionPerformed(ActionEvent evt) {
         JComponent c = target;

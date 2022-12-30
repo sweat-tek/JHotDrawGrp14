@@ -41,6 +41,7 @@ public class PasteAction extends AbstractSelectionAction {
     /**
      * Creates a new instance which acts on the currently focused component.
      */
+    @FeatureEntryPoint(value = "Paste")
     public PasteAction() {
         this(null);
     }
@@ -57,7 +58,6 @@ public class PasteAction extends AbstractSelectionAction {
         labels.configureAction(this, ID);
     }
 
-    @FeatureEntryPoint(value = "Paste")
     @Override
     public void actionPerformed(ActionEvent evt) {
         JComponent c = target;

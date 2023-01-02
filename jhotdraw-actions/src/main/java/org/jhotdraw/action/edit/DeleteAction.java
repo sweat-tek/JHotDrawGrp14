@@ -63,6 +63,7 @@ public class DeleteAction extends TextAction {
      * focused component.
      */
     private JComponent target;
+    private ActionHelper helper = new ActionHelper();
     /**
      * This variable keeps a strong reference on the property change listener.
      */
@@ -113,12 +114,14 @@ public class DeleteAction extends TextAction {
 
     @Override
     public void actionPerformed(ActionEvent evt) {
-        JComponent c = target;
-        if (c == null && (KeyboardFocusManager.getCurrentKeyboardFocusManager().
+        JComponent c = helper.TargetCheck(target);
+        /*if (c == null && (KeyboardFocusManager.getCurrentKeyboardFocusManager().
                 getPermanentFocusOwner() instanceof JComponent)) {
             c = (JComponent) KeyboardFocusManager.getCurrentKeyboardFocusManager().
                     getPermanentFocusOwner();
         }
+
+         */
         if (c != null && c.isEnabled()) {
             if (c instanceof EditableComponent) {
                 ((EditableComponent) c).delete();

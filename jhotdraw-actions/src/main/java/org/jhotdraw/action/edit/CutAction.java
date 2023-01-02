@@ -65,7 +65,6 @@ public class CutAction extends AbstractSelectionAction {
                     c,
                     ClipboardUtil.getClipboard(),
                     TransferHandler.MOVE);
-            System.out.println(ClipboardUtil.getClipboard().getName());
         }
     }
 

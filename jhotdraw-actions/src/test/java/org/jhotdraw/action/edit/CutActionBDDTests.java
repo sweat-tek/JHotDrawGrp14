@@ -12,13 +12,13 @@ import static org.junit.Assert.*;
 
 
 public class CutActionBDDTests extends Stage<CutActionBDDTests>{
-    private CutAction action = new CutAction();
+    private CutAction cutAction = new CutAction();
     public JComponent target = new JComponent() {
     };
 
     @Test
     public void whenACutIsMade() {
-        action.actionPerformed(new ActionEvent(target, 0, ""));
+        cutAction.actionPerformed(new ActionEvent(target, 0, ""));
 
         ClipboardUtil.setClipboard(new Clipboard("test"));
 //        Transferable transferable = ClipboardUtil.getClipboard().getContents("test");

@@ -1,9 +1,7 @@
 name: pipeline
 on: 
   push:
-      branches:    
-      - 'develop'
-      - 'basicediting_feature'
+      branches: [ develop ]
   pull_request:
       branches: [ develop ]
 
@@ -42,5 +40,3 @@ jobs:
         env:
           SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
           SECRET_USER_TOKEN: ${{ secrets.SECRET_USER_TOKEN }}
-
-  

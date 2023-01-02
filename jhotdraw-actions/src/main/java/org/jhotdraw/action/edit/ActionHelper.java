@@ -14,7 +14,10 @@ public class ActionHelper {
             c = (JComponent) KeyboardFocusManager.getCurrentKeyboardFocusManager().
                     getPermanentFocusOwner();
         }*/
+
+
         KeyboardFocusManager keyboardFocusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+
         if (c == null && (keyboardFocusManager.getPermanentFocusOwner() instanceof JComponent)) {
             c = (JComponent) keyboardFocusManager.getPermanentFocusOwner();
         }

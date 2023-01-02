@@ -59,12 +59,14 @@ public class CutAction extends AbstractSelectionAction {
 
     @Override
     public void actionPerformed(ActionEvent evt) {
-        JComponent c = helper.TargetCheck(target);
+        JComponent c = actionHelper.TargetCheck(target);
         if (c != null && c.isEnabled()) {
             c.getTransferHandler().exportToClipboard(
                     c,
                     ClipboardUtil.getClipboard(),
                     TransferHandler.MOVE);
+            System.out.println(ClipboardUtil.getClipboard().getName());
         }
     }
+
 }

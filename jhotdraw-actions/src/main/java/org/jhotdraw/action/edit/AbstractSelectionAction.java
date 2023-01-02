@@ -50,7 +50,7 @@ public abstract class AbstractSelectionAction extends AbstractAction {
      * focused component.
      */
     protected JComponent target;
-    protected ActionHelper helper = new ActionHelper();
+    protected ActionHelper actionHelper = new ActionHelper();
     /**
      * This variable keeps a strong reference on the property change listener.
      */

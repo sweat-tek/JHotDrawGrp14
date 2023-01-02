@@ -1,7 +1,9 @@
 name: pipeline
 on: 
   push:
-      branches: [ develop ]
+      branches:    
+      - 'develop'
+      - 'basicediting_feature'
   pull_request:
       branches: [ develop ]
 

@@ -19,7 +19,6 @@ import org.junit.Test;
 public class CutActionTest{
         private CutAction cutAction;
         private JComponent target;
-        private Transferable transferable;
 
         @Before
         public void setUp() {
@@ -40,7 +39,7 @@ public class CutActionTest{
             // Test that the actionPerformed method works as expected
             cutAction.actionPerformed(new ActionEvent(target, 0, ""));
 
-            transferable = ClipboardUtil.getClipboard().getContents("");
+            Transferable transferable = ClipboardUtil.getClipboard().getContents(null);
             assertNotNull(transferable);
             assertTrue(transferable.isDataFlavorSupported(DataFlavor.stringFlavor));
         }

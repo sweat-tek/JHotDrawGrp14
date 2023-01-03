@@ -1,0 +1,279 @@
+{
+  "className": "org.jhotdraw.samples.svg.figures.ParameterizedPanCakeScenarioTest",
+  "name": "Parameterized Pan Cake Scenario",
+  "scenarios": [
+    {
+      "className": "org.jhotdraw.samples.svg.figures.ParameterizedPanCakeScenarioTest",
+      "testMethodName": "a_meal_can_be_fried_out_of_an_egg_milk_and_some_ingredient",
+      "description": "a meal can be fried out of an egg milk and some ingredient",
+      "tagIds": [],
+      "explicitParameters": [
+        "ingredient",
+        "expectedMeal"
+      ],
+      "derivedParameters": [
+        "ingredient",
+        "expectedMeal"
+      ],
+      "scenarioCases": [
+        {
+          "caseNr": 1,
+          "steps": [
+            {
+              "name": "an egg",
+              "words": [
+                {
+                  "value": "Given",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "an egg"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 3432100,
+              "depth": 0,
+              "parentFailed": false
+            },
+            {
+              "name": "some milk",
+              "words": [
+                {
+                  "value": "and",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "some milk"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 192600,
+              "depth": 0,
+              "parentFailed": false
+            },
+            {
+              "name": "the ingredient",
+              "words": [
+                {
+                  "value": "and",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the ingredient"
+                },
+                {
+                  "value": "flour",
+                  "argumentInfo": {
+                    "parameterName": "ingredient",
+                    "argumentName": "ingredient",
+                    "formattedValue": "flour"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1871400,
+              "depth": 0,
+              "parentFailed": false
+            },
+            {
+              "name": "the cook mangles everthing to a dough",
+              "words": [
+                {
+                  "value": "When",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the cook mangles everthing to a dough"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 55089200,
+              "depth": 0,
+              "parentFailed": false
+            },
+            {
+              "name": "the cook fries the dough in a pan",
+              "words": [
+                {
+                  "value": "and",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the cook fries the dough in a pan"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2066800,
+              "depth": 0,
+              "parentFailed": false
+            },
+            {
+              "name": "the resulting meal is a",
+              "words": [
+                {
+                  "value": "Then",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the resulting meal is a"
+                },
+                {
+                  "value": "pancake",
+                  "argumentInfo": {
+                    "parameterName": "expectedMeal",
+                    "argumentName": "expectedMeal",
+                    "formattedValue": "pancake"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 5251800,
+              "depth": 0,
+              "parentFailed": false
+            }
+          ],
+          "explicitArguments": [
+            "flour",
+            "pancake"
+          ],
+          "derivedArguments": [
+            "flour",
+            "pancake"
+          ],
+          "status": "SUCCESS",
+          "durationInNanos": 95332300
+        },
+        {
+          "caseNr": 2,
+          "steps": [
+            {
+              "name": "an egg",
+              "words": [
+                {
+                  "value": "Given",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "an egg"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 146600,
+              "depth": 0,
+              "parentFailed": false
+            },
+            {
+              "name": "some milk",
+              "words": [
+                {
+                  "value": "and",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "some milk"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 120400,
+              "depth": 0,
+              "parentFailed": false
+            },
+            {
+              "name": "the ingredient",
+              "words": [
+                {
+                  "value": "and",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the ingredient"
+                },
+                {
+                  "value": "sugar",
+                  "argumentInfo": {
+                    "parameterName": "ingredient",
+                    "argumentName": "ingredient",
+                    "formattedValue": "sugar"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 390000,
+              "depth": 0,
+              "parentFailed": false
+            },
+            {
+              "name": "the cook mangles everthing to a dough",
+              "words": [
+                {
+                  "value": "When",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the cook mangles everthing to a dough"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 319600,
+              "depth": 0,
+              "parentFailed": false
+            },
+            {
+              "name": "the cook fries the dough in a pan",
+              "words": [
+                {
+                  "value": "and",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the cook fries the dough in a pan"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 206200,
+              "depth": 0,
+              "parentFailed": false
+            },
+            {
+              "name": "the resulting meal is a",
+              "words": [
+                {
+                  "value": "Then",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the resulting meal is a"
+                },
+                {
+                  "value": "mishmash",
+                  "argumentInfo": {
+                    "parameterName": "expectedMeal",
+                    "argumentName": "expectedMeal",
+                    "formattedValue": "mishmash"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 440100,
+              "depth": 0,
+              "parentFailed": false
+            }
+          ],
+          "explicitArguments": [
+            "sugar",
+            "mishmash"
+          ],
+          "derivedArguments": [
+            "sugar",
+            "mishmash"
+          ],
+          "status": "SUCCESS",
+          "durationInNanos": 2163600
+        }
+      ],
+      "casesAsTable": true,
+      "durationInNanos": 97495900
+    }
+  ],
+  "tagMap": {}
+}

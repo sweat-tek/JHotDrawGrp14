@@ -32,6 +32,7 @@ import org.jhotdraw.util.*;
  * @author Werner Randelshofer
  * @version $Id$
  */
+
 public class CopyAction extends AbstractSelectionAction {
 
     private static final long serialVersionUID = 1L;

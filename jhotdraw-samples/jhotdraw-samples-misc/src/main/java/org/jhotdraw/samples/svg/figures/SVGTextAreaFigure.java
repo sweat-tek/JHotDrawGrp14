@@ -8,6 +8,7 @@
 package org.jhotdraw.samples.svg.figures;
 
 import dk.sdu.mmmi.featuretracer.lib.FeatureEntryPoint;
+import org.checkerframework.checker.units.qual.A;
 import org.jhotdraw.draw.figure.TextHolderFigure;
 import java.awt.*;
 import java.awt.font.*;
@@ -49,6 +50,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     private static final long serialVersionUID = 1L;
     private Rectangle2D.Double bounds = new Rectangle2D.Double();
     private boolean editable = true;
+
     private static final BasicStroke DASHES = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0f, new float[]{4f, 4f}, 0f);
     /**
      * This is a cached value to improve the performance of method isTextOverflow();
@@ -74,8 +76,8 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     }
 
     // DRAWING
-
-    @FeatureEntryPoint(value="DrawText")
+    // Feature text tool draw
+    @FeatureEntryPoint(value="TextWrite - drawText")
     @Override
     protected void drawText(java.awt.Graphics2D g) {
     }
@@ -102,6 +104,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
 
     @Override
     public Rectangle2D.Double getDrawingArea() {
+
         if (cachedDrawingArea == null) {
             Rectangle2D.Double r = getBounds();
             double g = SVGAttributeKeys.getPerpendicularHitGrowth(this, 1.0);
@@ -119,7 +122,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     /**
      * Checks if a Point2D.Double is inside the figure.
      */
-
+    // This could be a Test Case
     @Override
     public boolean contains(Point2D.Double p) {
         if (get(TRANSFORM) != null) {
@@ -136,25 +139,17 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
         if (cachedTextShape == null) {
             Path2D.Double shape;
             cachedTextShape = shape = new Path2D.Double();
-            if (getText() != null || isEditable()) {
+
+            if (containsEditableText()) {
                 Font font = getFont();
                 boolean isUnderlined = get(FONT_UNDERLINE);
-                Insets2D.Double insets = getInsets();
-                Rectangle2D.Double textRect = new Rectangle2D.Double(
-                        bounds.x + insets.left,
-                        bounds.y + insets.top,
-                        bounds.width - insets.left - insets.right,
-                        bounds.height - insets.top - insets.bottom);
-                float leftMargin = (float) textRect.x;
-                float rightMargin = (float) Math.max(leftMargin + 1, textRect.x + textRect.width);
-                float verticalPos = (float) textRect.y;
-                float maxVerticalPos = (float) (textRect.y + textRect.height);
-                if (leftMargin < rightMargin) {
-                    float tabWidth = (float) (getTabSize() * font.getStringBounds("m", getFontRenderContext()).getWidth());
-                    float[] tabStops = new float[(int) (textRect.width / tabWidth)];
-                    for (int i = 0; i < tabStops.length; i++) {
-                        tabStops[i] = (float) (textRect.x + (int) (tabWidth * (i + 1)));
-                    }
+
+                // create Text Rectangle
+                TextBox textBox = new TextBox();
+
+                if (textBox.hasInnerArea) {
+                    float [] tabStops = findTabs(textBox);
+
                     if (getText() != null) {
                         String[] paragraphs = getText().split("\n"); //Strings.split(getText(), '\n');
                         for (int i = 0; i < paragraphs.length; i++) {
@@ -167,11 +162,11 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
                                 as.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
                             }
                             int tabCount = paragraphs[i].split("\t").length - 1;
-                            Rectangle2D.Double paragraphBounds = appendParagraph(
-                                    shape, as.getIterator(),
-                                    verticalPos, maxVerticalPos, leftMargin, rightMargin, tabStops, tabCount);
-                            verticalPos = (float) (paragraphBounds.y + paragraphBounds.height);
-                            if (verticalPos > textRect.y + textRect.height) {
+                            Paragraph paragraph = new Paragraph(shape, as.getIterator(),
+                                    textBox, tabStops, tabCount);
+                            Rectangle2D.Double paragraphBounds = appendParagraph(paragraph);
+                            textBox.verticalPos = (float) (paragraphBounds.y + paragraphBounds.height);
+                            if (textBox.verticalPos > textBox.textRect.y + textBox.textRect.height) {
                                 break;
                             }
                         }
@@ -182,126 +177,139 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
         return cachedTextShape;
     }
 
+    private float[] findTabs(TextBox textBox) {
+        float tabWidth = (float) (getTabSize() * getFont().getStringBounds("m", getFontRenderContext()).getWidth());
+        float[] tabStops = new float[(int) (textBox.textRect.width / tabWidth)];
+        for (int i = 0; i < tabStops.length; i++) {
+            tabStops[i] = (float) (textBox.textRect.x + (int) (tabWidth * (i + 1)));
+        }
+        return tabStops;
+    }
+
     /**
      * Appends a paragraph of text at the specified y location and returns
      * the bounds of the paragraph.
-     *
-     *
-     * @param shape Shape to which to add the glyphs of the paragraph. This
-     * parameter is null, if we only want to measure the size of the paragraph.
-     * @param styledText the text of the paragraph.
-     * @param verticalPos the top bound of the paragraph
-     * @param maxVerticalPos the bottom bound of the paragraph
-     * @param leftMargin the left bound of the paragraph
-     * @param rightMargin the right bound of the paragraph
-     * @param tabStops an array with tab stops
-     * @param tabCount the number of entries in tabStops which contain actual
-     * values
      * @return Returns the actual bounds of the paragraph.
      */
-    @FeatureEntryPoint(value="TextAreaFigure-AppendParagraph")
-    private Rectangle2D.Double appendParagraph(Path2D.Double shape,
-            AttributedCharacterIterator styledText,
-            float verticalPos, float maxVerticalPos,
-            float leftMargin, float rightMargin,
-            float[] tabStops, int tabCount) {
-        // assume styledText is an AttributedCharacterIterator, and the number
-        // of tabs in styledText is tabCount
-        Rectangle2D.Double paragraphBounds = new Rectangle2D.Double(leftMargin, verticalPos, 0, 0);
-        int[] tabLocations = new int[tabCount + 1];
-        int i = 0;
-        for (char c = styledText.first(); c != CharacterIterator.DONE; c = styledText.next()) {
-            if (c == '\t') {
-                tabLocations[i++] = styledText.getIndex();
-            }
-        }
-        tabLocations[tabCount] = styledText.getEndIndex() - 1;
-        // Now tabLocations has an entry for every tab's offset in
-        // the text.  For convenience, the last entry is tabLocations
-        // is the offset of the last character in the text.
-        LineBreakMeasurer measurer = new LineBreakMeasurer(styledText, getFontRenderContext());
+
+    @FeatureEntryPoint(value="TextAreaWrite-AppendParagraph")
+    public Rectangle2D.Double appendParagraph(Paragraph paragraph) {
+       // locations of tabs in text
+        int[] tabLocations = stylizeTextTabs(paragraph);
+        // iterator for breaks in text layout for paragraph
+        LineBreakMeasurer measurer = new LineBreakMeasurer(paragraph.styledText, getFontRenderContext());
+        // counter for curent text segment
         int currentTab = 0;
-        while (measurer.getPosition() < styledText.getEndIndex()) {
-            // Lay out and draw each line.  All segments on a line
-            // must be computed before any drawing can occur, since
-            // we must know the largest ascent on the line.
-            // TextLayouts are computed and stored in a List;
-            // their horizontal positions are stored in a parallel
-            // List.
-            // lineContainsText is true after first segment is drawn
-            boolean lineContainsText = false;
-            boolean lineComplete = false;
-            float maxAscent = 0, maxDescent = 0;
-            float horizontalPos = leftMargin;
-            LinkedList<TextLayout> layouts = new LinkedList<TextLayout>();
-            LinkedList<Float> penPositions = new LinkedList<Float>();
-            while (!lineComplete) {
-                float wrappingWidth = rightMargin - horizontalPos;
-                TextLayout layout = null;
-                layout
-                        = measurer.nextLayout(wrappingWidth,
-                                tabLocations[currentTab] + 1,
-                                lineContainsText);
-                // layout can be null if lineContainsText is true
-                // Replace with a conditional operator?
-                if (layout != null) {
-                    layouts.add(layout);
-                    penPositions.add(horizontalPos);
-                    horizontalPos += layout.getAdvance();
-                    maxAscent = Math.max(maxAscent, layout.getAscent());
-                    maxDescent = Math.max(maxDescent,
-                            layout.getDescent() + layout.getLeading());
-                } else {
-                    lineComplete = true;
-                }
 
-                lineContainsText = true;
-                // Replace with a switch?
-                if (measurer.getPosition() == tabLocations[currentTab] + 1) {
-                    currentTab++;
-                }
-                if (measurer.getPosition() == styledText.getEndIndex()) {
-                    lineComplete = true;
-                } else if (tabStops.length == 0 || horizontalPos >= tabStops[tabStops.length - 1]) {
-                    lineComplete = true;
-                }
-
-                // Dublicated code?
-                if (!lineComplete) {
-                    // move to next tab stop
-                    int j;
-                    for (j = 0; horizontalPos >= tabStops[j]; j++) {
-                    }
-                    horizontalPos = tabStops[j];
-                }
+        // draw each text line segment in a paragraph
+        while (measurer.getPosition() < paragraph.styledText.getEndIndex()) {
+            ParagraphLine paragraphLine = new ParagraphLine(paragraph);
+            // draw paragraph layout
+            while (!paragraphLine.isComplete) {
+                // iterate through the contents of the line
+                float wrappingWidth = paragraph.rightMargin - paragraphLine.horizontalPos;
+                paragraphLine.textLayout = measurer.nextLayout(wrappingWidth,
+                        tabLocations[currentTab] + 1, paragraphLine.containsText);
+                // check if Line contains any text, and draw text for this line
+                drawTextLayoutForLine(paragraphLine);
+                // check if line contains any tabs
+                boolean tabFound = measurer.getPosition() == tabLocations[currentTab] + 1;
+                if (tabFound) { currentTab++;}
+                // check if ParagraphLine is complete
+                breakLoopIfLineIsComplete(paragraph, paragraphLine, measurer);
+                // iterates through all tabs to adjust line position in paragraph
+                adjustParagraphLinePosition(paragraph, paragraphLine);
             }
-            verticalPos += maxAscent;
-            if (verticalPos > maxVerticalPos) {
-                break;
-            }
-            Iterator<TextLayout> layoutEnum = layouts.iterator();
-            Iterator<Float> positionEnum = penPositions.iterator();
-            // now iterate through layouts and draw them
-            // Make a method draw layouts?
-            while (layoutEnum.hasNext()) {
-                TextLayout nextLayout = layoutEnum.next();
-                float nextPosition = positionEnum.next();
-                AffineTransform tx = new AffineTransform();
-                tx.translate(nextPosition, verticalPos);
-                if (shape != null) {
-                    Shape outline = nextLayout.getOutline(tx);
-                    shape.append(outline, false);
-                }
-                Rectangle2D layoutBounds = nextLayout.getBounds();
-                paragraphBounds.add(new Rectangle2D.Double(layoutBounds.getX() + nextPosition,
-                        layoutBounds.getY() + verticalPos,
-                        layoutBounds.getWidth(),
-                        layoutBounds.getHeight()));
-            }
-            verticalPos += maxDescent;
+            // set paragraph vertical position after all lines are complete
+            paragraph.verticalPos += paragraphLine.maxAscent;
+            // break loop when paragraph is complete
+            boolean endOfParagraphReached= paragraph.verticalPos > paragraph.maxVerticalPos;
+            if (endOfParagraphReached) { break; }
+            // set the final paragraph position
+            drawParagraphBounds(paragraph, paragraphLine);
         }
-        return paragraphBounds;
+        return paragraph.paragraphBounds;
     }
+
+    private void breakLoopIfLineIsComplete(Paragraph paragraph, ParagraphLine paragraphLine, LineBreakMeasurer measurer) {
+        boolean lineTextEndReached = measurer.getPosition() == paragraph.styledText.getEndIndex();
+        boolean endBoundryOfLineReached = paragraph.tabStops.length == 0 || paragraphLine.horizontalPos >= paragraph.tabStops[paragraph.tabStops.length - 1];
+
+        if (lineTextEndReached) { paragraphLine.isComplete = true;}
+        else if (endBoundryOfLineReached) {
+            paragraphLine.isComplete = true;
+        }
+    }
+
+    private void drawParagraphBounds(Paragraph paragraph, ParagraphLine paragraphLine) {
+        Iterator<TextLayout> layoutEnum = paragraphLine.layouts.iterator();
+        Iterator<Float> positionEnum = paragraphLine.penPositions.iterator();
+        drawLayouts(layoutEnum,positionEnum,paragraph.verticalPos,paragraph.shape,paragraph.paragraphBounds);
+        paragraph.verticalPos += paragraphLine.maxDescent;
+    }
+
+    private void adjustParagraphLinePosition(Paragraph paragraph, ParagraphLine paragraphLine) {
+        // check if ParagraphLine is complete and therefore has no tabs
+        if (!paragraphLine.isComplete) {
+            // move to next tab stop in the line
+            int j;
+            for (j = 0; paragraphLine.horizontalPos >= paragraph.tabStops[j]; j++) {
+            }
+            paragraphLine.horizontalPos = paragraph.tabStops[j];
+        }
+    }
+
+    private void drawTextLayoutForLine(ParagraphLine paragraphLine) {
+        // check if line is empty and therefore already complete
+        if(paragraphLine.textLayout == null){
+            paragraphLine.isComplete = true;
+        }else {
+            paragraphLine.layouts.add(paragraphLine.textLayout);
+            paragraphLine.penPositions.add(paragraphLine.horizontalPos);
+            paragraphLine.horizontalPos += paragraphLine.textLayout.getAdvance();
+            paragraphLine.maxAscent = Math.max(paragraphLine.maxAscent, paragraphLine.textLayout.getAscent());
+            paragraphLine.maxDescent = Math.max(paragraphLine.maxDescent, paragraphLine.textLayout.getDescent() + paragraphLine.textLayout.getLeading());
+        }
+        paragraphLine.containsText = true;
+    }
+
+    public int[] stylizeTextTabs(Paragraph paragraph) {
+        // get tab locations from a paragraph
+        int[] tabLocations = new int[paragraph.tabCount + 1];
+        int i = 0;
+        for (char c = paragraph.styledText.first();
+             c != CharacterIterator.DONE; c = paragraph.styledText.next()) {
+            if (c == '\t') {
+                tabLocations[i++] = paragraph.styledText.getIndex();
+            }
+        }
+        tabLocations[paragraph.tabCount] = paragraph.styledText.getEndIndex() - 1;
+        // For convenience, the last entry
+        // is tabLocations is the offset of the last character in the text.
+        return  tabLocations;
+    }
+
+    //Extracted method draw Layouts, to reduce loops in loops
+    public void drawLayouts(Iterator<TextLayout>layoutEnum,
+                            Iterator<Float> positionEnum, float verticalPos,
+                            Path2D.Double shape,Rectangle2D.Double paragraphBounds){
+        while (layoutEnum.hasNext()) {
+            TextLayout nextLayout = layoutEnum.next();
+            float nextPosition = positionEnum.next();
+            AffineTransform tx = new AffineTransform();
+            tx.translate(nextPosition, verticalPos);
+            if (shape != null) {
+                Shape outline = nextLayout.getOutline(tx);
+                shape.append(outline, false);
+            }
+            Rectangle2D layoutBounds = nextLayout.getBounds();
+            paragraphBounds.add(new Rectangle2D.Double(layoutBounds.getX() + nextPosition,
+                    layoutBounds.getY() + verticalPos,
+                    layoutBounds.getWidth(),
+                    layoutBounds.getHeight()));
+        }
+    }
+
 
     @Override
     public void setBounds(Point2D.Double anchor, Point2D.Double lead) {
@@ -317,7 +325,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
      *
      * @param tx the transformation.
      */
-    @FeatureEntryPoint(value="Transform")
+    @FeatureEntryPoint(value="TextAreaEdit - Transform")
     @Override
     public void transform(AffineTransform tx) {
         if (get(TRANSFORM) != null
@@ -368,10 +376,10 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     @Override
     public Object getTransformRestoreData() {
         return new Object[]{
-            bounds.clone(),
-            TRANSFORM.getClone(this),
-            FILL_GRADIENT.getClone(this),
-            STROKE_GRADIENT.getClone(this)};
+                bounds.clone(),
+                TRANSFORM.getClone(this),
+                FILL_GRADIENT.getClone(this),
+                STROKE_GRADIENT.getClone(this)};
     }
 // ATTRIBUTES
 
@@ -403,7 +411,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     /**
      * Sets the text shown by the text figure.
      */
-    @FeatureEntryPoint(value="SetText")
+
     @Override
     public void setText(String newText) {
         set(TEXT, newText);
@@ -492,6 +500,11 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
         return editable;
     }
 
+    public boolean containsEditableText() {
+        return (getText() != null || isEditable());
+    }
+
+
     public void setEditable(boolean b) {
         this.editable = b;
     }
@@ -543,7 +556,7 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
     public boolean isEmpty() {
         return getText() == null || getText().length() == 0;
     }
-    @FeatureEntryPoint(value="Invalidate")
+
     @Override
     public void invalidate() {
         super.invalidate();
@@ -577,16 +590,11 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
         if (getText() != null) {
             Font font = getFont();
             boolean isUnderlined = get(FONT_UNDERLINE);
-            float leftMargin = 0;
-            float rightMargin = (float) maxWidth - 1;
-            float verticalPos = 0;
-            float maxVerticalPos = Float.MAX_VALUE;
-            if (leftMargin < rightMargin) {
-                float tabWidth = (float) (getTabSize() * font.getStringBounds("m", getFontRenderContext()).getWidth());
-                float[] tabStops = new float[(int) (textRect.width / tabWidth)];
-                for (int i = 0; i < tabStops.length; i++) {
-                    tabStops[i] = (float) (textRect.x + (int) (tabWidth * (i + 1)));
-                }
+            TextBox textBox = new TextBox(0,(float) maxWidth - 1,0);
+
+            if (textBox.hasInnerArea) {
+                float [] tabStops = findTabs(textBox);
+
                 if (getText() != null) {
                     String[] paragraphs = getText().split("\n"); //Strings.split(getText(), '\n');
                     for (int i = 0; i < paragraphs.length; i++) {
@@ -599,8 +607,9 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
                             as.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
                         }
                         int tabCount = paragraphs[i].split("\t").length - 1;
-                        Rectangle2D.Double paragraphBounds = appendParagraph(null, as.getIterator(), verticalPos, maxVerticalPos, leftMargin, rightMargin, tabStops, tabCount);
-                        verticalPos = (float) (paragraphBounds.y + paragraphBounds.height);
+                        Paragraph paragraph = new Paragraph(null, as.getIterator(), textBox, tabStops, tabCount);
+                        Rectangle2D.Double paragraphBounds = appendParagraph(paragraph);
+                        textBox.verticalPos = (float) (paragraphBounds.y + paragraphBounds.height);
                         textRect.add(paragraphBounds);
                     }
                 }
@@ -608,12 +617,123 @@ public class SVGTextAreaFigure extends SVGAttributedFigure
         }
         return new Dimension2DDouble(Math.abs(textRect.x) + textRect.width, Math.abs(textRect.y) + textRect.height);
     }
-
-    @FeatureEntryPoint(value="Clone text area")
     @Override
     public SVGTextAreaFigure clone() {
         SVGTextAreaFigure that = (SVGTextAreaFigure) super.clone();
         that.bounds = (Rectangle2D.Double) this.bounds.clone();
         return that;
+    }
+    public class TextBox {
+        private Rectangle2D.Double textRect;
+        private float leftMargin;
+        private float rightMargin;
+        private float verticalPos;
+        private float maxVerticalPos;
+        private boolean hasInnerArea;
+        public TextBox() {
+            this.textRect = createNewTextRectangle();
+            this.leftMargin = (float) textRect.x;
+            this.rightMargin = (float) Math.max(leftMargin + 1, textRect.x + textRect.width);
+            this.verticalPos = (float) textRect.y;
+            this.maxVerticalPos = (float) (textRect.y + textRect.height);
+            this.hasInnerArea = (leftMargin < rightMargin);
+        }
+        public TextBox(int leftMargin, float rightMargin, int  verticalPos) {
+            this.textRect = createNewTextRectangle();
+            this.leftMargin = (float) leftMargin;
+            this.rightMargin = rightMargin;
+            this.verticalPos = (float) verticalPos;
+            this.maxVerticalPos = Float.MAX_VALUE;
+            this.hasInnerArea = (leftMargin < rightMargin);
+        }
+
+        //getters
+        public float getLeftMargin() { return leftMargin; }
+        public float getRightMargin() { return rightMargin; }
+        public float getVerticalPos() { return verticalPos; }
+        public float getMaxVerticalPos() { return maxVerticalPos; }
+
+    }
+    public Rectangle2D.Double createNewTextRectangle(){
+        SVGTextAreaFigure svgTextAreaFigure = new SVGTextAreaFigure();
+        Insets2D.Double insets = svgTextAreaFigure.getInsets();
+        Rectangle2D.Double textRect = new Rectangle2D.Double(
+                bounds.x + insets.left,
+                bounds.y + insets.top,
+                bounds.width - insets.left - insets.right,
+                bounds.height - insets.top - insets.bottom);
+        return textRect;
+    }
+
+    public static class Paragraph {
+        private Path2D.Double shape;
+        AttributedCharacterIterator styledText;
+        private float verticalPos;
+        private float maxVerticalPos;
+        private float leftMargin;
+        private  float rightMargin;
+        private float[] tabStops;
+        private int tabCount;
+        private TextBox textBox;
+        private Rectangle2D.Double paragraphBounds;
+        public Paragraph(Path2D.Double shape, AttributedCharacterIterator styledText,
+                         TextBox textBox, float[] tabStops, int tabCount) {
+            this.shape = shape;
+            this.textBox = textBox;
+            this.styledText = styledText;
+            this.verticalPos = textBox.getVerticalPos();
+            this.maxVerticalPos = textBox.getMaxVerticalPos();
+            this.leftMargin = textBox.getLeftMargin();
+            this.rightMargin = textBox.getRightMargin();
+            this.tabStops = tabStops;
+            this.tabCount = tabCount;
+            this.paragraphBounds =  new Rectangle2D.Double(this.leftMargin, this.verticalPos, 0, 0);
+        }
+
+        @Override
+        public String toString() {
+            return "Paragraph{" +
+                    "shape=" + shape +
+                    ", styledText=" + styledText.toString() +
+                    ", verticalPos=" + verticalPos +
+                    ", maxVerticalPos=" + maxVerticalPos +
+                    ", leftMargin=" + leftMargin +
+                    ", rightMargin=" + rightMargin +
+                    ", tabStops=" + Arrays.toString(tabStops) +
+                    ", tabCount=" + tabCount +
+                    ", textBoxLeftMargin=" + textBox.getLeftMargin() +
+                    ", textBoxRightMargin=" +textBox.getRightMargin() +
+                    ", textMaxVertical=" +textBox.getMaxVerticalPos()+
+                    ", textVerticalPos=" +textBox.getVerticalPos()+
+                    ", paragraphBounds=" + paragraphBounds +
+                    '}';
+        }
+
+        // getters and setters
+        public float[] getTabStops() { return tabStops; }
+        public void setTabStops(float[] tabStops) { this.tabStops = tabStops;}
+        public int getTabCount() { return tabCount;}
+        public void setTabCount(int tabCount) { this.tabCount = tabCount; }
+    }
+    public class ParagraphLine{
+        private boolean containsText;
+        private boolean isComplete;
+        private TextLayout textLayout;
+        private float maxAscent;
+        private float maxDescent;
+        private float horizontalPos;
+        private LinkedList<TextLayout> layouts;
+        private LinkedList<Float> penPositions;
+
+        public ParagraphLine(Paragraph paragraph) {
+            this.containsText = false;
+            this.isComplete = false;
+            this.textLayout = null;
+            this.maxAscent = 0;
+            this.maxDescent = 0;
+            this.horizontalPos = paragraph.leftMargin;
+            this.layouts = new LinkedList<TextLayout>();
+            this.penPositions = new LinkedList<Float>();
+        }
     }
 }

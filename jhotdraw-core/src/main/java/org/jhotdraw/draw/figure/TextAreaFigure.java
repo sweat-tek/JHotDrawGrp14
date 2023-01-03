@@ -69,6 +69,7 @@ public class TextAreaFigure extends AbstractAttributedDecoratedFigure implements
      * This is a cached value to improve the performance of method isTextOverflow();
      */
     private Boolean isTextOverflow;
+    private boolean hasEditableText = getText() != null || isEditable();
 
     /**
      * Creates a new instance.

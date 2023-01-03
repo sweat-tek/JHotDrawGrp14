@@ -7,6 +7,7 @@
  */
 package org.jhotdraw.samples.svg.figures;
 
+import dk.sdu.mmmi.featuretracer.lib.FeatureEntryPoint;
 import org.jhotdraw.draw.figure.TextHolderFigure;
 import java.awt.*;
 import java.awt.font.*;
@@ -74,6 +75,7 @@ public class SVGTextFigure
     }
 
     // DRAWING
+
     @Override
     protected void drawText(java.awt.Graphics2D g) {
     }
@@ -289,6 +291,7 @@ public class SVGTextFigure
     /**
      * Gets the text shown by the text figure.
      */
+
     @Override
     public String getText() {
         return get(TEXT);
@@ -309,6 +312,8 @@ public class SVGTextFigure
     /**
      * Sets the text shown by the text figure.
      */
+    // Feature text tool draw
+    @FeatureEntryPoint(value="TextWrite - drawText")
     @Override
     public void setText(String newText) {
         set(TEXT, newText);
@@ -386,6 +391,7 @@ public class SVGTextFigure
 
     // EDITING
     // CONNECTING
+
     @Override
     public void invalidate() {
         super.invalidate();
@@ -429,6 +435,8 @@ public class SVGTextFigure
      * <p>
      * Returns null, if no specialized tool is available.
      */
+    // Feature text tool edit
+    @FeatureEntryPoint(value="TextEdit - getEditingTool")
     @Override
     public Tool getTool(Point2D.Double p) {
         if (isEditable() && contains(p)) {

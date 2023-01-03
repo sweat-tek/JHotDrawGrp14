@@ -5,7 +5,9 @@ on:
   pull_request:
       branches: [ develop ]
 
-
+env:
+  SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
+  SECRET_USER_TOKEN: ${{ secrets.SECRET_USER_TOKEN }}
 
 jobs:
   build:

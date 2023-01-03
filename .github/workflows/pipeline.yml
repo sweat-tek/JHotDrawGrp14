@@ -5,9 +5,7 @@ on:
   pull_request:
       branches: [ develop ]
 
-env:
-  SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
-  SECRET_USER_TOKEN: ${{ secrets.SECRET_USER_TOKEN }}
+
 
 jobs:
   build:
@@ -21,14 +19,14 @@ jobs:
           java-version: 11
           distribution: 'adopt'
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -s settings.xml --batch-mode --update-snapshots -Dsurefire.failIfNoSpecifiedTests=false test
         env:
           SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
           SECRET_USER_TOKEN: ${{ secrets.SECRET_USER_TOKEN }}
 
 
   test:
-    name: Tests
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -38,7 +36,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Test with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn clean install -s settings.xml --batch-mode --update-snapshots package
         env:
           SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
           SECRET_USER_TOKEN: ${{ secrets.SECRET_USER_TOKEN }}

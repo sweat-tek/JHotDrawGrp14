@@ -37,6 +37,7 @@ import static org.jhotdraw.samples.svg.SVGAttributeKeys.*;
 public class SVGRectFigure extends SVGAttributedFigure implements SVGFigure {
 
     private static final long serialVersionUID = 1L;
+    private TransformHelper transformHelper = new TransformHelper();
     /**
      * Identifies the {@code arcWidth} JavaBeans property.
      */
@@ -74,15 +75,14 @@ public class SVGRectFigure extends SVGAttributedFigure implements SVGFigure {
     /**
      * Creates a new instance.
      */
-    @FeatureEntryPoint("Rectangle")
     public SVGRectFigure() {
         this(0, 0, 0, 0);
     }
 
-    @FeatureEntryPoint("Rectangle")
     public SVGRectFigure(double x, double y, double width, double height) {
         this(x, y, width, height, 0, 0);
     }
+
 
     @FeatureEntryPoint("Rectangle")
     public SVGRectFigure(double x, double y, double width, double height, double rx, double ry) {
@@ -92,6 +92,7 @@ public class SVGRectFigure extends SVGAttributedFigure implements SVGFigure {
     }
 
     // DRAWING
+    @FeatureEntryPoint("Rectangle")
     @Override
     protected void drawFill(Graphics2D g) {
         if (getArcHeight() == 0d && getArcWidth() == 0d) {
@@ -101,6 +102,7 @@ public class SVGRectFigure extends SVGAttributedFigure implements SVGFigure {
         }
     }
 
+    @FeatureEntryPoint("Rectangle")
     @Override
     protected void drawStroke(Graphics2D g) {
         if (roundrect.archeight == 0 && roundrect.arcwidth == 0) {
@@ -272,14 +274,14 @@ public class SVGRectFigure extends SVGAttributedFigure implements SVGFigure {
     /**
      * Transforms the figure.
      *
-     * @param tx The transformation.
+     * @param affineTransform The transformation.
      */
     @Override
-    public void transform(AffineTransform tx) {
+    public void transform(AffineTransform affineTransform) {
         invalidateTransformedShape();
-        if (get(TRANSFORM) != null
-                || //              (tx.getType() & (AffineTransform.TYPE_TRANSLATION | AffineTransform.TYPE_MASK_SCALE)) != tx.getType()) {
-                (tx.getType() & (AffineTransform.TYPE_TRANSLATION)) != tx.getType()) {
+        transformHelper.transform(affineTransform, this);
+        /*
+        if (get(TRANSFORM) != null || (tx.getType() & (AffineTransform.TYPE_TRANSLATION)) != tx.getType()) {
             if (get(TRANSFORM) == null) {
                 set(TRANSFORM, (AffineTransform) tx.clone());
             } else {
@@ -306,6 +308,8 @@ public class SVGRectFigure extends SVGAttributedFigure implements SVGFigure {
                 set(STROKE_GRADIENT, g);
             }
         }
+
+         */
     }
 
     @Override
@@ -327,10 +331,8 @@ public class SVGRectFigure extends SVGAttributedFigure implements SVGFigure {
             STROKE_GRADIENT.getClone(this)};
     }
 
-    // EDITING
-    @FeatureEntryPoint("Rectangle Edit")
-    @Override
-    public Collection<Handle> createHandles(int detailLevel) {
+
+    /*public Collection<Handle> createHandles(int detailLevel) {
         LinkedList<Handle> handles = new LinkedList<Handle>();
         switch (detailLevel % 2) {
             case -1: // Mouse hover handles
@@ -349,6 +351,28 @@ public class SVGRectFigure extends SVGAttributedFigure implements SVGFigure {
         }
         return handles;
     }
+
+     */
+
+    // EDITING
+    @FeatureEntryPoint("Rectangle Edit")
+    @Override
+    public Collection<Handle> createHandles(int detailLevel) {
+        LinkedList<Handle> handles = new LinkedList<>();
+        if (detailLevel % 2 == -1) {
+            handles.add(new BoundsOutlineHandle(this, false, true));
+        } else if (detailLevel % 2 == 0) {
+            ResizeHandleKit.addResizeHandles(this, handles);
+            handles.add(new SVGRectRadiusHandle(this));
+            handles.add(new LinkHandle(this));
+        } else if (detailLevel % 2 == 1) {
+            TransformHandleKit.addTransformHandles(this, handles);
+        }
+        return handles;
+    }
+
+
+
 
     // CLONING
     @Override

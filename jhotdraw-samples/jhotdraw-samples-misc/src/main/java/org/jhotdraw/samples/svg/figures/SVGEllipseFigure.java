@@ -33,6 +33,7 @@ public class SVGEllipseFigure extends SVGAttributedFigure implements SVGFigure {
 
     private static final long serialVersionUID = 1L;
     private Ellipse2D.Double ellipse;
+    private TransformHelper transformHelper = new TransformHelper();
     /**
      * This is used to perform faster drawing and hit testing.
      */
@@ -152,12 +153,14 @@ public class SVGEllipseFigure extends SVGAttributedFigure implements SVGFigure {
     /**
      * Transforms the figure.
      *
-     * @param tx the transformation.
+     * @param affineTransform the transformation.
      */
     @Override
-    public void transform(AffineTransform tx) {
-        if (get(TRANSFORM) != null
-                || (tx.getType() & (AffineTransform.TYPE_TRANSLATION)) != tx.getType()) {
+    public void transform(AffineTransform affineTransform) {
+
+        transformHelper.transform(affineTransform, this);
+        /*
+        if (get(TRANSFORM) != null || (tx.getType() & (AffineTransform.TYPE_TRANSLATION)) != tx.getType()) {
             if (get(TRANSFORM) == null) {
                 TRANSFORM.setClone(this, tx);
             } else {
@@ -184,6 +187,8 @@ public class SVGEllipseFigure extends SVGAttributedFigure implements SVGFigure {
                 set(STROKE_GRADIENT, g);
             }
         }
+
+         */
         invalidate();
     }
 

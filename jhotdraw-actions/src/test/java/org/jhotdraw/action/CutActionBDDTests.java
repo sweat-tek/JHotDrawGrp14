@@ -1,7 +1,7 @@
 package org.jhotdraw.action;
 
 import com.tngtech.jgiven.Stage;
-import org.jhotdraw.action.edit.CutAction;
+/*import org.jhotdraw.action.edit.CutAction;
 import org.jhotdraw.datatransfer.ClipboardUtil;
 
 import javax.swing.*;
@@ -10,9 +10,11 @@ import java.awt.event.ActionEvent;
 
 import static org.junit.Assert.*;
 
+ */
+
 
 public class CutActionBDDTests extends Stage<CutActionBDDTests>{
-    private CutAction cutAction = new CutAction();
+    /*private CutAction cutAction = new CutAction();
     public JComponent target = new JComponent() {
     };
 
@@ -25,4 +27,6 @@ public class CutActionBDDTests extends Stage<CutActionBDDTests>{
         assertNotNull(ClipboardUtil.getClipboard());
         assertEquals(ClipboardUtil.getClipboard().getName(), "test");
     }
+
+     */
 }

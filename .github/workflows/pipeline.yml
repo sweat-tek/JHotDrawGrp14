@@ -19,6 +19,7 @@ jobs:
           java-version: 11
           distribution: 'adopt'
       - name: Build with Maven
+        if: always()
         run: mvn -s settings.xml --batch-mode --update-snapshots -Dsurefire.failIfNoSpecifiedTests=false verify
         env:
           SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}
@@ -36,6 +37,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Test with Maven
+        if: always()
         run: mvn clean install -s settings.xml --batch-mode --update-snapshots package
         env:
           SECRET_USER_NAME: ${{ secrets.SECRET_USER_NAME }}

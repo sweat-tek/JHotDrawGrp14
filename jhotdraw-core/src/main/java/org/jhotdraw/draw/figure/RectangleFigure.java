@@ -9,6 +9,7 @@ package org.jhotdraw.draw.figure;
 
 import java.awt.*;
 import java.awt.geom.*;
+
 import org.jhotdraw.draw.AttributeKeys;
 import org.jhotdraw.geom.Geom;
 
@@ -18,6 +19,7 @@ import org.jhotdraw.geom.Geom;
  * @author Werner Randelshofer
  * @version $Id$
  */
+
 public class RectangleFigure extends AbstractAttributedFigure {
 
     private static final long serialVersionUID = 1L;

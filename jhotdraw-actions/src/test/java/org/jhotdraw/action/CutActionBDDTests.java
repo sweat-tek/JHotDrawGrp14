@@ -3,7 +3,6 @@ package org.jhotdraw.action;
 import com.tngtech.jgiven.Stage;
 import org.jhotdraw.action.edit.CutAction;
 import org.jhotdraw.datatransfer.ClipboardUtil;
-import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.datatransfer.Clipboard;
@@ -17,7 +16,7 @@ public class CutActionBDDTests extends Stage<CutActionBDDTests>{
     public JComponent target = new JComponent() {
     };
 
-    
+
     public void whenACutIsMade() {
         cutAction.actionPerformed(new ActionEvent(target, 0, ""));
 
